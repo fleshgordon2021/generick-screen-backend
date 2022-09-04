@@ -1,7 +1,7 @@
 # generick-screen-backend
 
 Start project
-npm start
+In terminal typing npm start
 
 Start Camunda 
-double click start.bat
+double click file start.bat
