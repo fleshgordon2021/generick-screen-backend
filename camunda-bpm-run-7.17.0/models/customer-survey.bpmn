@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_0hg6cwm" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:collaboration id="Collaboration_1toflla">
+    <bpmn:participant id="survey" name="Survey" processRef="customer-survey" />
+  </bpmn:collaboration>
+  <bpmn:process id="customer-survey" name="Survey" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_11xtbgk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:scriptTask id="Activity_0az91ow" name="Init data" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_11xtbgk</bpmn:incoming>
+      <bpmn:outgoing>Flow_1405rp4</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("businessKey",execution.getProcessBusinessKey());</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:userTask id="Activity_13do92s" name="test" camunda:formKey="generic-task/${taskId}?businessKey=${businessKey}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="email" label="Email" type="string" defaultValue="mladjamilic96@gmail.com">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="email" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:taskListener event="create">
+          <camunda:script scriptFormat="JavaScript">task.setVariable('taskId', task.getId());</camunda:script>
+        </camunda:taskListener>
+        <camunda:taskListener expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;check-user-task&#34;).processInstanceBusinessKey(execution.getProcessBusinessKey()).setVariable(&#39;taskId&#39;,execution.getVariable(&#39;taskId&#39;)).correlateWithResult()}" event="create" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_15ff3q0</bpmn:incoming>
+      <bpmn:incoming>Flow_0ksb4m0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1i85qus</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sendTask id="Activity_0o2s967" name="New Task" camunda:type="external" camunda:topic="redirectionTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="route">/home</camunda:inputParameter>
+          <camunda:inputParameter name="businessKey">${businessKey}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1j0g0i9</bpmn:incoming>
+      <bpmn:outgoing>Flow_1aaz9cx</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="Event_02nh377">
+      <bpmn:incoming>Flow_1aaz9cx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Activity_0242olk" name="Enter email" camunda:formKey="generic-task/${taskId}?businessKey=${businessKey}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="firstName" label="First name" type="string">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:taskListener event="create">
+          <camunda:script scriptFormat="JavaScript">task.setVariable('taskId', task.getId());</camunda:script>
+        </camunda:taskListener>
+        <camunda:taskListener expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;check-user-task&#34;).processInstanceBusinessKey(execution.getProcessBusinessKey()).setVariable(&#39;taskId&#39;,execution.getVariable(&#39;taskId&#39;)).correlateWithResult()}" event="create" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1i85qus</bpmn:incoming>
+      <bpmn:outgoing>Flow_1j0g0i9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:subProcess id="Activity_1l885ay" name="Stop process" triggeredByEvent="true">
+      <bpmn:endEvent id="Event_1565eb1">
+        <bpmn:incoming>Flow_1vhygns</bpmn:incoming>
+        <bpmn:terminateEventDefinition id="TerminateEventDefinition_0c8i0pi" />
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_09h61wz" sourceRef="Event_0jgd8ug" targetRef="Activity_0mqvwo5" />
+      <bpmn:startEvent id="Event_0jgd8ug">
+        <bpmn:outgoing>Flow_09h61wz</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_195ssqm" messageRef="Message_25ainpu" />
+      </bpmn:startEvent>
+      <bpmn:sendTask id="Activity_0mqvwo5" name="New Task" camunda:type="external" camunda:topic="redirectionTask">
+        <bpmn:extensionElements>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="route">/home</camunda:inputParameter>
+            <camunda:inputParameter name="businessKey">${businessKey}</camunda:inputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_09h61wz</bpmn:incoming>
+        <bpmn:outgoing>Flow_1vhygns</bpmn:outgoing>
+      </bpmn:sendTask>
+      <bpmn:sequenceFlow id="Flow_1vhygns" sourceRef="Activity_0mqvwo5" targetRef="Event_1565eb1" />
+    </bpmn:subProcess>
+    <bpmn:boundaryEvent id="Event_1uk1b7n" attachedToRef="Activity_13do92s">
+      <bpmn:outgoing>Flow_08wmxr8</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0zps2i6" messageRef="Message_2nd2cpo" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_1jxl4qu" attachedToRef="Activity_0242olk">
+      <bpmn:outgoing>Flow_0ksb4m0</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0e9k91f" messageRef="Message_2nd2cpo" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_15ff3q0" sourceRef="Activity_18gk170" targetRef="Activity_13do92s" />
+    <bpmn:sequenceFlow id="Flow_1aaz9cx" sourceRef="Activity_0o2s967" targetRef="Event_02nh377" />
+    <bpmn:sequenceFlow id="Flow_11xtbgk" sourceRef="StartEvent_1" targetRef="Activity_0az91ow" />
+    <bpmn:sequenceFlow id="Flow_1405rp4" sourceRef="Activity_0az91ow" targetRef="Activity_18gk170" />
+    <bpmn:sequenceFlow id="Flow_1i85qus" sourceRef="Activity_13do92s" targetRef="Activity_0242olk" />
+    <bpmn:sequenceFlow id="Flow_08wmxr8" sourceRef="Event_1uk1b7n" targetRef="Activity_18gk170" />
+    <bpmn:sequenceFlow id="Flow_1j0g0i9" sourceRef="Activity_0242olk" targetRef="Activity_0o2s967" />
+    <bpmn:sequenceFlow id="Flow_0ksb4m0" sourceRef="Event_1jxl4qu" targetRef="Activity_13do92s" />
+    <bpmn:userTask id="Activity_18gk170" name="Enter email" camunda:formKey="generic-task/${taskId}?businessKey=${businessKey}">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="email" label="Email" type="string" defaultValue="mladjamilic96@gmail.com">
+            <camunda:properties>
+              <camunda:property id="wide" value="false" />
+              <camunda:property id="data-type" value="email" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="firstName" label="First name" type="string">
+            <camunda:properties>
+              <camunda:property id="wide" value="false" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="number" label="Number" type="long">
+            <camunda:properties>
+              <camunda:property id="wide" value="false" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="text" label="Text" type="string">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="textarea" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="maxlength" config="255" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="phoneNumber" label="Phone number" type="string">
+            <camunda:properties>
+              <camunda:property id="country-code" value="+381" />
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="phoneNumber" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="date" label="Enter date" type="date">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="check" label="Check me" type="boolean">
+            <camunda:properties>
+              <camunda:property id="wide" value="false" />
+              <camunda:property id="data-type" value="checkbox" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="slidetoggle" label="Slide me" type="boolean">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="slide-toggle" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="radioButton" label="Pick your favorite season" type="enum">
+            <camunda:properties>
+              <camunda:property id="wide" value="false" />
+            </camunda:properties>
+            <camunda:value id="winter" name="Winter" />
+            <camunda:value id="spring" name="Spring" />
+            <camunda:value id="summer" name="Summer" />
+            <camunda:value id="autumn" name="Autumn" />
+          </camunda:formField>
+          <camunda:formField id="divider" type="string">
+            <camunda:properties>
+              <camunda:property id="data-type" value="divider" />
+              <camunda:property id="wide" value="false" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="amount" label="Amount" type="long">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="amount" />
+              <camunda:property id="suffix" value=".00" />
+              <camunda:property id="prefix" value="RSD" />
+            </camunda:properties>
+            <camunda:validation />
+          </camunda:formField>
+          <camunda:formField id="food" label="Favorite food" type="enum">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="select" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+            <camunda:value id="steak" name="Steak" />
+            <camunda:value id="pizza" name="Pizza" />
+            <camunda:value id="tacos" name="Tacos" />
+          </camunda:formField>
+          <camunda:formField id="html" type="string" defaultValue="Plain Text Example &#38;amp; &#60;strong&#62;Bold Text Example&#60;/strong&#62;">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="html" />
+            </camunda:properties>
+            <camunda:validation />
+          </camunda:formField>
+          <camunda:formField id="paragraph" type="string" defaultValue="This is a paragraph.">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="paragraph" />
+            </camunda:properties>
+          </camunda:formField>
+        </camunda:formData>
+        <camunda:taskListener event="create">
+          <camunda:script scriptFormat="JavaScript">task.setVariable('taskId', task.getId());</camunda:script>
+        </camunda:taskListener>
+        <camunda:taskListener expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;check-user-task&#34;).processInstanceBusinessKey(execution.getProcessBusinessKey()).setVariable(&#39;taskId&#39;,execution.getVariable(&#39;taskId&#39;)).correlateWithResult()}" event="create" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1405rp4</bpmn:incoming>
+      <bpmn:incoming>Flow_08wmxr8</bpmn:incoming>
+      <bpmn:outgoing>Flow_15ff3q0</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmn:message id="Message_25ainpu" name="stop" />
+  <bpmn:message id="Message_2nd2cpo" name="back" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1toflla">
+      <bpmndi:BPMNShape id="Participant_1qpg35p_di" bpmnElement="survey" isHorizontal="true">
+        <dc:Bounds x="160" y="82" width="1350" height="568" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0ksb4m0_di" bpmnElement="Flow_0ksb4m0">
+        <di:waypoint x="970" y="348" />
+        <di:waypoint x="970" y="368" />
+        <di:waypoint x="810" y="366" />
+        <di:waypoint x="810" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1j0g0i9_di" bpmnElement="Flow_1j0g0i9">
+        <di:waypoint x="1050" y="290" />
+        <di:waypoint x="1130" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08wmxr8_di" bpmnElement="Flow_08wmxr8">
+        <di:waypoint x="860" y="232" />
+        <di:waypoint x="860" y="212" />
+        <di:waypoint x="640" y="212" />
+        <di:waypoint x="640" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i85qus_di" bpmnElement="Flow_1i85qus">
+        <di:waypoint x="860" y="290" />
+        <di:waypoint x="950" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1405rp4_di" bpmnElement="Flow_1405rp4">
+        <di:waypoint x="540" y="290" />
+        <di:waypoint x="590" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11xtbgk_di" bpmnElement="Flow_11xtbgk">
+        <di:waypoint x="418" y="290" />
+        <di:waypoint x="440" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1aaz9cx_di" bpmnElement="Flow_1aaz9cx">
+        <di:waypoint x="1230" y="290" />
+        <di:waypoint x="1312" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15ff3q0_di" bpmnElement="Flow_15ff3q0">
+        <di:waypoint x="690" y="290" />
+        <di:waypoint x="760" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="382" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1bzqy9i_di" bpmnElement="Activity_0az91ow">
+        <dc:Bounds x="440" y="250" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1r0108v" bpmnElement="Activity_13do92s">
+        <dc:Bounds x="760" y="250" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1eqi22l" bpmnElement="Activity_0o2s967">
+        <dc:Bounds x="1130" y="250" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_02nh377_di" bpmnElement="Event_02nh377">
+        <dc:Bounds x="1312" y="272" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_14mvi3h" bpmnElement="Activity_0242olk">
+        <dc:Bounds x="950" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0e7hhzh_di" bpmnElement="Activity_18gk170">
+        <dc:Bounds x="590" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0bxhkun_di" bpmnElement="Activity_1l885ay" isExpanded="true">
+        <dc:Bounds x="260" y="420" width="350" height="200" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1vhygns_di" bpmnElement="Flow_1vhygns">
+        <di:waypoint x="480" y="520" />
+        <di:waypoint x="512" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09h61wz_di" bpmnElement="Flow_09h61wz">
+        <di:waypoint x="338" y="520" />
+        <di:waypoint x="380" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_017jdqo_di" bpmnElement="Event_1565eb1">
+        <dc:Bounds x="512" y="502" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_19exocj_di" bpmnElement="Event_0jgd8ug">
+        <dc:Bounds x="302" y="502" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_04yaaff" bpmnElement="Activity_0mqvwo5">
+        <dc:Bounds x="380" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1h7ap95" bpmnElement="Event_1jxl4qu">
+        <dc:Bounds x="952" y="312" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0zqtxof" bpmnElement="Event_1uk1b7n">
+        <dc:Bounds x="842" y="232" width="36" height="36" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
