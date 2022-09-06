@@ -12,61 +12,6 @@
       <bpmn:outgoing>Flow_1405rp4</bpmn:outgoing>
       <bpmn:script>execution.setVariable("businessKey",execution.getProcessBusinessKey());</bpmn:script>
     </bpmn:scriptTask>
-    <bpmn:userTask id="Activity_13do92s" name="test" camunda:formKey="generic-task/${taskId}?businessKey=${businessKey}">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="email" label="Email" type="string" defaultValue="mladjamilic96@gmail.com">
-            <camunda:properties>
-              <camunda:property id="wide" value="true" />
-              <camunda:property id="data-type" value="email" />
-            </camunda:properties>
-            <camunda:validation>
-              <camunda:constraint name="required" config="true" />
-            </camunda:validation>
-          </camunda:formField>
-        </camunda:formData>
-        <camunda:taskListener event="create">
-          <camunda:script scriptFormat="JavaScript">task.setVariable('taskId', task.getId());</camunda:script>
-        </camunda:taskListener>
-        <camunda:taskListener expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;check-user-task&#34;).processInstanceBusinessKey(execution.getProcessBusinessKey()).setVariable(&#39;taskId&#39;,execution.getVariable(&#39;taskId&#39;)).correlateWithResult()}" event="create" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_15ff3q0</bpmn:incoming>
-      <bpmn:incoming>Flow_0ksb4m0</bpmn:incoming>
-      <bpmn:outgoing>Flow_1i85qus</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:sendTask id="Activity_0o2s967" name="New Task" camunda:type="external" camunda:topic="redirectionTask">
-      <bpmn:extensionElements>
-        <camunda:inputOutput>
-          <camunda:inputParameter name="route">/home</camunda:inputParameter>
-          <camunda:inputParameter name="businessKey">${businessKey}</camunda:inputParameter>
-        </camunda:inputOutput>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1j0g0i9</bpmn:incoming>
-      <bpmn:outgoing>Flow_1aaz9cx</bpmn:outgoing>
-    </bpmn:sendTask>
-    <bpmn:endEvent id="Event_02nh377">
-      <bpmn:incoming>Flow_1aaz9cx</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:userTask id="Activity_0242olk" name="Enter email" camunda:formKey="generic-task/${taskId}?businessKey=${businessKey}">
-      <bpmn:extensionElements>
-        <camunda:formData>
-          <camunda:formField id="firstName" label="First name" type="string">
-            <camunda:properties>
-              <camunda:property id="wide" value="true" />
-            </camunda:properties>
-            <camunda:validation>
-              <camunda:constraint name="required" config="true" />
-            </camunda:validation>
-          </camunda:formField>
-        </camunda:formData>
-        <camunda:taskListener event="create">
-          <camunda:script scriptFormat="JavaScript">task.setVariable('taskId', task.getId());</camunda:script>
-        </camunda:taskListener>
-        <camunda:taskListener expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;check-user-task&#34;).processInstanceBusinessKey(execution.getProcessBusinessKey()).setVariable(&#39;taskId&#39;,execution.getVariable(&#39;taskId&#39;)).correlateWithResult()}" event="create" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1i85qus</bpmn:incoming>
-      <bpmn:outgoing>Flow_1j0g0i9</bpmn:outgoing>
-    </bpmn:userTask>
     <bpmn:subProcess id="Activity_1l885ay" name="Stop process" triggeredByEvent="true">
       <bpmn:endEvent id="Event_1565eb1">
         <bpmn:incoming>Flow_1vhygns</bpmn:incoming>
@@ -89,176 +34,245 @@
       </bpmn:sendTask>
       <bpmn:sequenceFlow id="Flow_1vhygns" sourceRef="Activity_0mqvwo5" targetRef="Event_1565eb1" />
     </bpmn:subProcess>
-    <bpmn:boundaryEvent id="Event_1uk1b7n" attachedToRef="Activity_13do92s">
-      <bpmn:outgoing>Flow_08wmxr8</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_0zps2i6" messageRef="Message_2nd2cpo" />
-    </bpmn:boundaryEvent>
-    <bpmn:boundaryEvent id="Event_1jxl4qu" attachedToRef="Activity_0242olk">
-      <bpmn:outgoing>Flow_0ksb4m0</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_0e9k91f" messageRef="Message_2nd2cpo" />
-    </bpmn:boundaryEvent>
-    <bpmn:sequenceFlow id="Flow_15ff3q0" sourceRef="Activity_18gk170" targetRef="Activity_13do92s" />
     <bpmn:sequenceFlow id="Flow_1aaz9cx" sourceRef="Activity_0o2s967" targetRef="Event_02nh377" />
     <bpmn:sequenceFlow id="Flow_11xtbgk" sourceRef="StartEvent_1" targetRef="Activity_0az91ow" />
-    <bpmn:sequenceFlow id="Flow_1405rp4" sourceRef="Activity_0az91ow" targetRef="Activity_18gk170" />
-    <bpmn:sequenceFlow id="Flow_1i85qus" sourceRef="Activity_13do92s" targetRef="Activity_0242olk" />
-    <bpmn:sequenceFlow id="Flow_08wmxr8" sourceRef="Event_1uk1b7n" targetRef="Activity_18gk170" />
-    <bpmn:sequenceFlow id="Flow_1j0g0i9" sourceRef="Activity_0242olk" targetRef="Activity_0o2s967" />
-    <bpmn:sequenceFlow id="Flow_0ksb4m0" sourceRef="Event_1jxl4qu" targetRef="Activity_13do92s" />
-    <bpmn:userTask id="Activity_18gk170" name="Enter email" camunda:formKey="generic-task/${taskId}?businessKey=${businessKey}">
+    <bpmn:sequenceFlow id="Flow_1405rp4" sourceRef="Activity_0az91ow" targetRef="Activity_1bk3oiv" />
+    <bpmn:sequenceFlow id="Flow_1jfnimu" sourceRef="Activity_1bk3oiv" targetRef="Activity_1vjysff" />
+    <bpmn:userTask id="Activity_1bk3oiv" name="Customer information" camunda:formKey="generic-task/${taskId}?businessKey=${businessKey}">
       <bpmn:extensionElements>
+        <camunda:taskListener event="create">
+          <camunda:script scriptFormat="JavaScript">task.setVariable('taskId', task.getId());</camunda:script>
+        </camunda:taskListener>
+        <camunda:taskListener expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;check-user-task&#34;).processInstanceBusinessKey(execution.getProcessBusinessKey()).setVariable(&#39;taskId&#39;,execution.getVariable(&#39;taskId&#39;)).correlateWithResult()}" event="create" />
         <camunda:formData>
-          <camunda:formField id="email" label="Email" type="string" defaultValue="mladjamilic96@gmail.com">
+          <camunda:formField id="firstName" label="Frist name" type="string" />
+          <camunda:formField id="lastName" label="Last name" type="string" />
+          <camunda:formField id="phoneNumber" label="Phone number" type="string">
             <camunda:properties>
-              <camunda:property id="wide" value="false" />
+              <camunda:property id="country-code" value="+381" />
+              <camunda:property id="data-type" value="phoneNumber" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="email" label="Email" type="string">
+            <camunda:properties>
               <camunda:property id="data-type" value="email" />
             </camunda:properties>
             <camunda:validation>
               <camunda:constraint name="required" config="true" />
             </camunda:validation>
           </camunda:formField>
-          <camunda:formField id="firstName" label="First name" type="string">
+          <camunda:formField id="dateBirth" label="Date birth" type="date" />
+          <camunda:formField id="gender" label="Gender" type="enum">
             <camunda:properties>
-              <camunda:property id="wide" value="false" />
+              <camunda:property id="data-type" value="select" />
             </camunda:properties>
-            <camunda:validation>
-              <camunda:constraint name="required" config="true" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="number" label="Number" type="long">
-            <camunda:properties>
-              <camunda:property id="wide" value="false" />
-            </camunda:properties>
-            <camunda:validation>
-              <camunda:constraint name="required" config="true" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="text" label="Text" type="string">
-            <camunda:properties>
-              <camunda:property id="wide" value="true" />
-              <camunda:property id="data-type" value="textarea" />
-            </camunda:properties>
-            <camunda:validation>
-              <camunda:constraint name="maxlength" config="255" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="phoneNumber" label="Phone number" type="string">
-            <camunda:properties>
-              <camunda:property id="country-code" value="+381" />
-              <camunda:property id="wide" value="true" />
-              <camunda:property id="data-type" value="phoneNumber" />
-            </camunda:properties>
-            <camunda:validation>
-              <camunda:constraint name="required" config="true" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="date" label="Enter date" type="date">
-            <camunda:properties>
-              <camunda:property id="wide" value="true" />
-            </camunda:properties>
-            <camunda:validation>
-              <camunda:constraint name="required" config="true" />
-            </camunda:validation>
-          </camunda:formField>
-          <camunda:formField id="check" label="Check me" type="boolean">
-            <camunda:properties>
-              <camunda:property id="wide" value="false" />
-              <camunda:property id="data-type" value="checkbox" />
-            </camunda:properties>
-          </camunda:formField>
-          <camunda:formField id="slidetoggle" label="Slide me" type="boolean">
-            <camunda:properties>
-              <camunda:property id="wide" value="true" />
-              <camunda:property id="data-type" value="slide-toggle" />
-            </camunda:properties>
-          </camunda:formField>
-          <camunda:formField id="radioButton" label="Pick your favorite season" type="enum">
-            <camunda:properties>
-              <camunda:property id="wide" value="false" />
-            </camunda:properties>
-            <camunda:value id="winter" name="Winter" />
-            <camunda:value id="spring" name="Spring" />
-            <camunda:value id="summer" name="Summer" />
-            <camunda:value id="autumn" name="Autumn" />
+            <camunda:value id="male" name="Male" />
+            <camunda:value id="female" name="Female" />
           </camunda:formField>
           <camunda:formField id="divider" type="string">
             <camunda:properties>
               <camunda:property id="data-type" value="divider" />
-              <camunda:property id="wide" value="false" />
             </camunda:properties>
           </camunda:formField>
-          <camunda:formField id="amount" label="Amount" type="long">
-            <camunda:properties>
-              <camunda:property id="wide" value="true" />
-              <camunda:property id="data-type" value="amount" />
-              <camunda:property id="suffix" value=".00" />
-              <camunda:property id="prefix" value="RSD" />
-            </camunda:properties>
-            <camunda:validation />
-          </camunda:formField>
-          <camunda:formField id="food" label="Favorite food" type="enum">
-            <camunda:properties>
-              <camunda:property id="wide" value="true" />
-              <camunda:property id="data-type" value="select" />
-            </camunda:properties>
-            <camunda:validation>
-              <camunda:constraint name="required" config="true" />
-            </camunda:validation>
-            <camunda:value id="steak" name="Steak" />
-            <camunda:value id="pizza" name="Pizza" />
-            <camunda:value id="tacos" name="Tacos" />
-          </camunda:formField>
-          <camunda:formField id="html" type="string" defaultValue="Plain Text Example &#38;amp; &#60;strong&#62;Bold Text Example&#60;/strong&#62;">
-            <camunda:properties>
-              <camunda:property id="wide" value="true" />
-              <camunda:property id="data-type" value="html" />
-            </camunda:properties>
-            <camunda:validation />
-          </camunda:formField>
-          <camunda:formField id="paragraph" type="string" defaultValue="This is a paragraph.">
+          <camunda:formField id="paragraph" type="string" defaultValue="Enter the address if you want to receive a catalog about our new products">
             <camunda:properties>
               <camunda:property id="wide" value="true" />
               <camunda:property id="data-type" value="paragraph" />
             </camunda:properties>
           </camunda:formField>
+          <camunda:formField id="addressStreet" label="Address street" type="string">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="city" label="City" type="string" />
+          <camunda:formField id="state" label="State / Province" type="string" />
+          <camunda:formField id="postal" label="Postal / Zip Code" type="string" />
         </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1405rp4</bpmn:incoming>
+      <bpmn:incoming>Flow_1dsfesx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jfnimu</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_037mvsc" sourceRef="Activity_1vjysff" targetRef="Activity_1gizr3g" />
+    <bpmn:userTask id="Activity_1vjysff" name="About products" camunda:formKey="generic-task/${taskId}?businessKey=${businessKey}">
+      <bpmn:extensionElements>
         <camunda:taskListener event="create">
           <camunda:script scriptFormat="JavaScript">task.setVariable('taskId', task.getId());</camunda:script>
         </camunda:taskListener>
         <camunda:taskListener expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;check-user-task&#34;).processInstanceBusinessKey(execution.getProcessBusinessKey()).setVariable(&#39;taskId&#39;,execution.getVariable(&#39;taskId&#39;)).correlateWithResult()}" event="create" />
+        <camunda:formData>
+          <camunda:formField id="htmlDate" type="string" defaultValue="&#60;p style=&#34;color: #555; margin-bottom: 12px;&#34;&#62;The date you purchased your first us product ?&#60;/p&#62;">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="html" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="dateBuy" label="Date" type="date" />
+          <camunda:formField id="likeOurProducts" label="Do you like our products?" type="enum">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+            <camunda:value id="yes" name="Yes" />
+            <camunda:value id="no" name="No" />
+          </camunda:formField>
+          <camunda:formField id="paragraphRateProduct" type="string" defaultValue="How do you rate the quality of our products from 1 to 10 ?">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="paragraph" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="productSccore" label="Product sccore" type="long">
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="experienceProducts" label="What was your overall experience with our products when you first used it?" type="enum">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+            <camunda:value id="verySatisfied" name="Very Satisfied" />
+            <camunda:value id="satisfied" name="Satisfied" />
+            <camunda:value id="neutral" name="Neutral" />
+            <camunda:value id="dissatisfied" name="Dissatisfied" />
+            <camunda:value id="veryDissatisfied" name="Very Dissatisfied" />
+          </camunda:formField>
+          <camunda:formField id="longUsedProducts" label="How long have you used our products?" type="enum">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="required" config="true" />
+            </camunda:validation>
+            <camunda:value id="sixMonthsOrMore" name="6 Months or more" />
+            <camunda:value id="oneToSixMonths" name="1 to 6 months" />
+            <camunda:value id="lessThanOneMonth" name="Less than 1 month" />
+            <camunda:value id="neverUsed" name="Never used" />
+          </camunda:formField>
+          <camunda:formField id="spendMooneyLable" type="string" defaultValue="How much money are you ready to spend on our products?">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="paragraph" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="amount" label="Amount" type="long">
+            <camunda:properties>
+              <camunda:property id="data-type" value="amount" />
+              <camunda:property id="suffix" value=".00" />
+              <camunda:property id="prefix" value="RSD" />
+            </camunda:properties>
+          </camunda:formField>
+        </camunda:formData>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1405rp4</bpmn:incoming>
-      <bpmn:incoming>Flow_08wmxr8</bpmn:incoming>
-      <bpmn:outgoing>Flow_15ff3q0</bpmn:outgoing>
+      <bpmn:incoming>Flow_1jfnimu</bpmn:incoming>
+      <bpmn:incoming>Flow_1us4dsb</bpmn:incoming>
+      <bpmn:outgoing>Flow_037mvsc</bpmn:outgoing>
     </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_08pb40u" attachedToRef="Activity_1vjysff">
+      <bpmn:outgoing>Flow_1dsfesx</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_01apjt2" messageRef="Message_05rn88a" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1dsfesx" sourceRef="Event_08pb40u" targetRef="Activity_1bk3oiv" />
+    <bpmn:sequenceFlow id="Flow_0lppmin" sourceRef="Activity_1gizr3g" targetRef="Activity_0ics49g" />
+    <bpmn:userTask id="Activity_1gizr3g" name="Suggestions for improving our products" camunda:formKey="generic-task/${taskId}?businessKey=${businessKey}">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="create">
+          <camunda:script scriptFormat="JavaScript">task.setVariable('taskId', task.getId());</camunda:script>
+        </camunda:taskListener>
+        <camunda:taskListener expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;check-user-task&#34;).processInstanceBusinessKey(execution.getProcessBusinessKey()).setVariable(&#39;taskId&#39;,execution.getVariable(&#39;taskId&#39;)).correlateWithResult()}" event="create" />
+        <camunda:formData>
+          <camunda:formField id="importantFeatures" label="What important features are our products missing?" type="string">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="textarea" />
+            </camunda:properties>
+            <camunda:validation>
+              <camunda:constraint name="maxlength" config="1000" />
+            </camunda:validation>
+          </camunda:formField>
+          <camunda:formField id="problemsWithOurProduct" label="Have you had any problems with our product? Can you specify?" type="string">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="textarea" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="changeProducts" label="If you could change something about our products, firstly what would it be?" type="string">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="textarea" />
+            </camunda:properties>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_037mvsc</bpmn:incoming>
+      <bpmn:incoming>Flow_1i85dpg</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lppmin</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1us4dsb" sourceRef="Event_0xd398b" targetRef="Activity_1vjysff" />
+    <bpmn:boundaryEvent id="Event_0xd398b" attachedToRef="Activity_1gizr3g">
+      <bpmn:outgoing>Flow_1us4dsb</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0at26do" messageRef="Message_1419wjx" />
+    </bpmn:boundaryEvent>
+    <bpmn:userTask id="Activity_0ics49g" name="Information about new us products" camunda:formKey="generic-task/${taskId}?businessKey=${businessKey}">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="create">
+          <camunda:script scriptFormat="JavaScript">task.setVariable('taskId', task.getId());</camunda:script>
+        </camunda:taskListener>
+        <camunda:taskListener expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;check-user-task&#34;).processInstanceBusinessKey(execution.getProcessBusinessKey()).setVariable(&#39;taskId&#39;,execution.getVariable(&#39;taskId&#39;)).correlateWithResult()}" event="create" />
+        <camunda:formData>
+          <camunda:formField id="reciveEmail" label="Recive on email" type="boolean">
+            <camunda:properties>
+              <camunda:property id="data-type" value="checkbox" />
+              <camunda:property id="wide" value="true" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="recomendFriends" label="Would you recommend our products to your friends?" type="boolean">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="slide-toggle" />
+            </camunda:properties>
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0lppmin</bpmn:incoming>
+      <bpmn:outgoing>Flow_1k448rj</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_00hfcm3" attachedToRef="Activity_0ics49g">
+      <bpmn:outgoing>Flow_1i85dpg</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_06dod75" messageRef="Message_0ixfglo" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1i85dpg" sourceRef="Event_00hfcm3" targetRef="Activity_1gizr3g" />
+    <bpmn:sendTask id="Activity_0o2s967" name="Redirect to home" camunda:type="external" camunda:topic="redirectionTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="route">/home</camunda:inputParameter>
+          <camunda:inputParameter name="businessKey">${businessKey}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1k448rj</bpmn:incoming>
+      <bpmn:outgoing>Flow_1aaz9cx</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:endEvent id="Event_02nh377">
+      <bpmn:incoming>Flow_1aaz9cx</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1k448rj" sourceRef="Activity_0ics49g" targetRef="Activity_0o2s967" />
   </bpmn:process>
   <bpmn:message id="Message_25ainpu" name="stop" />
   <bpmn:message id="Message_2nd2cpo" name="back" />
+  <bpmn:message id="Message_05rn88a" name="back" />
+  <bpmn:message id="Message_1419wjx" name="back" />
+  <bpmn:message id="Message_0ixfglo" name="back" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1toflla">
       <bpmndi:BPMNShape id="Participant_1qpg35p_di" bpmnElement="survey" isHorizontal="true">
-        <dc:Bounds x="160" y="82" width="1350" height="568" />
+        <dc:Bounds x="160" y="82" width="1970" height="568" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_0ksb4m0_di" bpmnElement="Flow_0ksb4m0">
-        <di:waypoint x="970" y="348" />
-        <di:waypoint x="970" y="368" />
-        <di:waypoint x="810" y="366" />
-        <di:waypoint x="810" y="330" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1j0g0i9_di" bpmnElement="Flow_1j0g0i9">
-        <di:waypoint x="1050" y="290" />
-        <di:waypoint x="1130" y="290" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_08wmxr8_di" bpmnElement="Flow_08wmxr8">
-        <di:waypoint x="860" y="232" />
-        <di:waypoint x="860" y="212" />
-        <di:waypoint x="640" y="212" />
-        <di:waypoint x="640" y="250" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_1i85qus_di" bpmnElement="Flow_1i85qus">
-        <di:waypoint x="860" y="290" />
-        <di:waypoint x="950" y="290" />
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1405rp4_di" bpmnElement="Flow_1405rp4">
         <di:waypoint x="540" y="290" />
         <di:waypoint x="590" y="290" />
@@ -268,12 +282,42 @@
         <di:waypoint x="440" y="290" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1aaz9cx_di" bpmnElement="Flow_1aaz9cx">
-        <di:waypoint x="1230" y="290" />
-        <di:waypoint x="1312" y="290" />
+        <di:waypoint x="1350" y="290" />
+        <di:waypoint x="1442" y="290" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_15ff3q0_di" bpmnElement="Flow_15ff3q0">
+      <bpmndi:BPMNEdge id="Flow_1jfnimu_di" bpmnElement="Flow_1jfnimu">
         <di:waypoint x="690" y="290" />
-        <di:waypoint x="760" y="290" />
+        <di:waypoint x="740" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_037mvsc_di" bpmnElement="Flow_037mvsc">
+        <di:waypoint x="840" y="290" />
+        <di:waypoint x="900" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1dsfesx_di" bpmnElement="Flow_1dsfesx">
+        <di:waypoint x="820" y="232" />
+        <di:waypoint x="820" y="212" />
+        <di:waypoint x="640" y="212" />
+        <di:waypoint x="640" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0lppmin_di" bpmnElement="Flow_0lppmin">
+        <di:waypoint x="1000" y="290" />
+        <di:waypoint x="1050" y="290" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1us4dsb_di" bpmnElement="Flow_1us4dsb">
+        <di:waypoint x="930" y="348" />
+        <di:waypoint x="930" y="368" />
+        <di:waypoint x="810" y="368" />
+        <di:waypoint x="810" y="330" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1i85dpg_di" bpmnElement="Flow_1i85dpg">
+        <di:waypoint x="1130" y="232" />
+        <di:waypoint x="1130" y="212" />
+        <di:waypoint x="970" y="212" />
+        <di:waypoint x="970" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k448rj_di" bpmnElement="Flow_1k448rj">
+        <di:waypoint x="1150" y="290" />
+        <di:waypoint x="1250" y="290" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
         <dc:Bounds x="382" y="272" width="36" height="36" />
@@ -282,25 +326,27 @@
         <dc:Bounds x="440" y="250" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1r0108v" bpmnElement="Activity_13do92s">
-        <dc:Bounds x="760" y="250" width="100" height="80" />
-        <bpmndi:BPMNLabel />
+      <bpmndi:BPMNShape id="Activity_0jhf76s_di" bpmnElement="Activity_1bk3oiv">
+        <dc:Bounds x="590" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1quv2qg_di" bpmnElement="Activity_1vjysff">
+        <dc:Bounds x="740" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0miuy2t_di" bpmnElement="Activity_1gizr3g">
+        <dc:Bounds x="900" y="250" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_14scvds_di" bpmnElement="Activity_0ics49g">
+        <dc:Bounds x="1050" y="250" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="BPMNShape_1eqi22l" bpmnElement="Activity_0o2s967">
-        <dc:Bounds x="1130" y="250" width="100" height="80" />
+        <dc:Bounds x="1250" y="250" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_02nh377_di" bpmnElement="Event_02nh377">
-        <dc:Bounds x="1312" y="272" width="36" height="36" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_14mvi3h" bpmnElement="Activity_0242olk">
-        <dc:Bounds x="950" y="250" width="100" height="80" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Activity_0e7hhzh_di" bpmnElement="Activity_18gk170">
-        <dc:Bounds x="590" y="250" width="100" height="80" />
+        <dc:Bounds x="1442" y="272" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_0bxhkun_di" bpmnElement="Activity_1l885ay" isExpanded="true">
-        <dc:Bounds x="260" y="420" width="350" height="200" />
+        <dc:Bounds x="260" y="420" width="490" height="200" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1vhygns_di" bpmnElement="Flow_1vhygns">
@@ -321,11 +367,14 @@
         <dc:Bounds x="380" y="480" width="100" height="80" />
         <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_1h7ap95" bpmnElement="Event_1jxl4qu">
-        <dc:Bounds x="952" y="312" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_007rlvk_di" bpmnElement="Event_08pb40u">
+        <dc:Bounds x="802" y="232" width="36" height="36" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_0zqtxof" bpmnElement="Event_1uk1b7n">
-        <dc:Bounds x="842" y="232" width="36" height="36" />
+      <bpmndi:BPMNShape id="Event_1unhom4_di" bpmnElement="Event_0xd398b">
+        <dc:Bounds x="912" y="312" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0af3yob_di" bpmnElement="Event_00hfcm3">
+        <dc:Bounds x="1112" y="232" width="36" height="36" />
       </bpmndi:BPMNShape>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
