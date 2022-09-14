@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definitions_1ygxyto" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="4.6.0">
+  <bpmn:collaboration id="Collaboration_1as7nbx">
+    <bpmn:participant id="Participant_19qlp7g" name="Delete survey" processRef="delete-survey" />
+  </bpmn:collaboration>
+  <bpmn:process id="delete-survey" name="Delete survey" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1">
+      <bpmn:outgoing>Flow_1uxvuiv</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1uxvuiv" sourceRef="StartEvent_1" targetRef="Activity_18pn385" />
+    <bpmn:sequenceFlow id="Flow_1jvhwwg" sourceRef="Activity_1ktfnka" targetRef="Gateway_0wm03bb" />
+    <bpmn:sequenceFlow id="Flow_1xvhhwt" sourceRef="Activity_09grwx0" targetRef="Gateway_06584vc" />
+    <bpmn:sequenceFlow id="Flow_0dxzhlm" sourceRef="Activity_1m0aa0k" targetRef="Event_0kogdig" />
+    <bpmn:userTask id="Activity_1ktfnka" name="Confirnation task" camunda:formKey="generic-task/${taskId}?businessKey=${businessKey}">
+      <bpmn:extensionElements>
+        <camunda:taskListener event="create">
+          <camunda:script scriptFormat="JavaScript">task.setVariable('taskId', task.getId());</camunda:script>
+        </camunda:taskListener>
+        <camunda:taskListener expression="${execution.getProcessEngineServices().getRuntimeService().createMessageCorrelation(&#34;check-user-task&#34;).processInstanceBusinessKey(execution.getProcessBusinessKey()).setVariable(&#39;taskId&#39;,execution.getVariable(&#39;taskId&#39;)).correlateWithResult()}" event="create" />
+        <camunda:formData>
+          <camunda:formField id="paragraph" type="string" defaultValue="Are you sure you want to delete this survey?">
+            <camunda:properties>
+              <camunda:property id="wide" value="true" />
+              <camunda:property id="data-type" value="paragraph" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="decision" label="Decision" type="enum" defaultValue="yes">
+            <camunda:properties>
+              <camunda:property id="data-type" value="select" />
+            </camunda:properties>
+            <camunda:value id="yes" name="Yes" />
+            <camunda:value id="no" name="No" />
+          </camunda:formField>
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1lbtu73</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jvhwwg</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:sequenceFlow id="Flow_1lbtu73" sourceRef="Activity_18pn385" targetRef="Activity_1ktfnka" />
+    <bpmn:scriptTask id="Activity_18pn385" name="Init data" scriptFormat="JavaScript">
+      <bpmn:incoming>Flow_1uxvuiv</bpmn:incoming>
+      <bpmn:outgoing>Flow_1lbtu73</bpmn:outgoing>
+      <bpmn:script>execution.setVariable("businessKey",execution.getProcessBusinessKey());</bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:serviceTask id="Activity_09grwx0" name="Delete Survey" camunda:type="external" camunda:topic="deleteSurvey">
+      <bpmn:incoming>Flow_1hl4fmi</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xvhhwt</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_0kogdig">
+      <bpmn:incoming>Flow_0dxzhlm</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_0wm03bb" default="Flow_1hl4fmi">
+      <bpmn:incoming>Flow_1jvhwwg</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hl4fmi</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0pz8odb</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1hl4fmi" sourceRef="Gateway_0wm03bb" targetRef="Activity_09grwx0" />
+    <bpmn:exclusiveGateway id="Gateway_06584vc">
+      <bpmn:incoming>Flow_1xvhhwt</bpmn:incoming>
+      <bpmn:incoming>Flow_0pz8odb</bpmn:incoming>
+      <bpmn:outgoing>Flow_0fd3z0k</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0fd3z0k" sourceRef="Gateway_06584vc" targetRef="Activity_1m0aa0k" />
+    <bpmn:sequenceFlow id="Flow_0pz8odb" sourceRef="Gateway_0wm03bb" targetRef="Gateway_06584vc">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${execution.getVariable("decision") eq "no" }</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sendTask id="Activity_1m0aa0k" name="Navigate to list surveys" camunda:type="external" camunda:topic="redirectionTask">
+      <bpmn:extensionElements>
+        <camunda:inputOutput>
+          <camunda:inputParameter name="route">/list-surveys</camunda:inputParameter>
+          <camunda:inputParameter name="businessKey">${businessKey}</camunda:inputParameter>
+        </camunda:inputOutput>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0fd3z0k</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dxzhlm</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:subProcess id="Activity_10b85t4" triggeredByEvent="true">
+      <bpmn:startEvent id="Event_1elc7i8">
+        <bpmn:outgoing>Flow_1p2dwqc</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_1bi3b8g" messageRef="Message_0yx2cnc" />
+      </bpmn:startEvent>
+      <bpmn:sequenceFlow id="Flow_1p2dwqc" sourceRef="Event_1elc7i8" targetRef="Activity_15qxsa7" />
+      <bpmn:sequenceFlow id="Flow_08ldcju" sourceRef="Activity_15qxsa7" targetRef="Event_03xohx5" />
+      <bpmn:endEvent id="Event_03xohx5">
+        <bpmn:incoming>Flow_08ldcju</bpmn:incoming>
+        <bpmn:terminateEventDefinition id="TerminateEventDefinition_0jz1eyx" />
+      </bpmn:endEvent>
+      <bpmn:sendTask id="Activity_15qxsa7" name="Navigate to list surveys" camunda:type="external" camunda:topic="redirectionTask">
+        <bpmn:extensionElements>
+          <camunda:inputOutput>
+            <camunda:inputParameter name="route">/list-surveys</camunda:inputParameter>
+            <camunda:inputParameter name="businessKey">${businessKey}</camunda:inputParameter>
+          </camunda:inputOutput>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1p2dwqc</bpmn:incoming>
+        <bpmn:outgoing>Flow_08ldcju</bpmn:outgoing>
+      </bpmn:sendTask>
+    </bpmn:subProcess>
+  </bpmn:process>
+  <bpmn:message id="Message_0yx2cnc" name="stop" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1as7nbx">
+      <bpmndi:BPMNShape id="Participant_19qlp7g_di" bpmnElement="Participant_19qlp7g" isHorizontal="true">
+        <dc:Bounds x="129" y="90" width="1009" height="440" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1uxvuiv_di" bpmnElement="Flow_1uxvuiv">
+        <di:waypoint x="215" y="220" />
+        <di:waypoint x="240" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jvhwwg_di" bpmnElement="Flow_1jvhwwg">
+        <di:waypoint x="480" y="220" />
+        <di:waypoint x="515" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xvhhwt_di" bpmnElement="Flow_1xvhhwt">
+        <di:waypoint x="700" y="220" />
+        <di:waypoint x="745" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dxzhlm_di" bpmnElement="Flow_0dxzhlm">
+        <di:waypoint x="940" y="220" />
+        <di:waypoint x="1002" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1lbtu73_di" bpmnElement="Flow_1lbtu73">
+        <di:waypoint x="340" y="220" />
+        <di:waypoint x="380" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hl4fmi_di" bpmnElement="Flow_1hl4fmi">
+        <di:waypoint x="565" y="220" />
+        <di:waypoint x="600" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0fd3z0k_di" bpmnElement="Flow_0fd3z0k">
+        <di:waypoint x="795" y="220" />
+        <di:waypoint x="840" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0pz8odb_di" bpmnElement="Flow_0pz8odb">
+        <di:waypoint x="540" y="245" />
+        <di:waypoint x="540" y="280" />
+        <di:waypoint x="770" y="280" />
+        <di:waypoint x="770" y="245" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="179" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0vtp7iw_di" bpmnElement="Activity_1ktfnka">
+        <dc:Bounds x="380" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1qdk503_di" bpmnElement="Activity_18pn385">
+        <dc:Bounds x="240" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1xfeiy2_di" bpmnElement="Activity_09grwx0">
+        <dc:Bounds x="600" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0kogdig_di" bpmnElement="Event_0kogdig">
+        <dc:Bounds x="1002" y="202" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0wm03bb_di" bpmnElement="Gateway_0wm03bb" isMarkerVisible="true">
+        <dc:Bounds x="515" y="195" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_06584vc_di" bpmnElement="Gateway_06584vc" isMarkerVisible="true">
+        <dc:Bounds x="745" y="195" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_09fs30b_di" bpmnElement="Activity_1m0aa0k">
+        <dc:Bounds x="840" y="180" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ajwtqp_di" bpmnElement="Activity_10b85t4" isExpanded="true">
+        <dc:Bounds x="170" y="310" width="360" height="200" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1p2dwqc_di" bpmnElement="Flow_1p2dwqc">
+        <di:waypoint x="238" y="400" />
+        <di:waypoint x="290" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08ldcju_di" bpmnElement="Flow_08ldcju">
+        <di:waypoint x="390" y="400" />
+        <di:waypoint x="442" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Event_01nhfe4_di" bpmnElement="Event_1elc7i8">
+        <dc:Bounds x="202" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_11e40fh_di" bpmnElement="Event_03xohx5">
+        <dc:Bounds x="442" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1v2gn80_di" bpmnElement="Activity_15qxsa7">
+        <dc:Bounds x="290" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
